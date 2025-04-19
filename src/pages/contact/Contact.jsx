@@ -1,56 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import emailjs from 'emailjs-com';
+import React, { useRef, useState } from "react";
+import emailjs from "@emailjs/browser";
 import './contact.css';
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    company: '',
-    message: '',
-  });
+  const formRef = useRef();
   const [resultMessage, setResultMessage] = useState('');
 
-  // 1) Initialize EmailJS with your PUBLIC key from client/.env
-  useEffect(() => {
-    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-    if (!publicKey) {
-      console.error('Missing VITE_EMAILJS_PUBLIC_KEY in client/.env');
-      return;
-    }
-    emailjs.init(publicKey);
-    console.log('EmailJS initialized with public key:', publicKey);
-  }, []);
-
-  // 2) Update form state on input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  // 3) Submit via EmailJS
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    const serviceId  = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-    if (!serviceId || !templateId) {
-      console.error('Missing VITE_EMAILJS_SERVICE_ID or VITE_EMAILJS_TEMPLATE_ID');
-      setResultMessage('Configuration error. Unable to send message.');
-      return;
-    }
-
-    try {
-      const result = await emailjs.send(serviceId, templateId, formData);
+    emailjs.sendForm(
+      import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+      formRef.current,
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+    )
+    .then((result) => {
       console.log('EmailJS success:', result.text);
       setResultMessage('Message sent successfully!');
-      setFormData({ firstName: '', lastName: '', email: '', phone: '', company: '', message: '' });
-    } catch (error) {
-      console.error('EmailJS error:', error);
+      formRef.current.reset();
+    })
+    .catch((err) => {
+      console.error('EmailJS error:', err);
       setResultMessage('An error occurred. Please try again later.');
-    }
+    });
   };
 
   return (
@@ -65,7 +38,7 @@ export default function Contact() {
       </section>
 
       <section className="contact-form-section">
-        <form className="contact-form" onSubmit={handleSubmit}>
+        <form ref={formRef} className="contact-form" onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="firstName">First Name</label>
@@ -73,8 +46,6 @@ export default function Contact() {
                 type="text"
                 id="firstName"
                 name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
                 placeholder="Enter your first name"
                 required
               />
@@ -85,8 +56,6 @@ export default function Contact() {
                 type="text"
                 id="lastName"
                 name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
                 placeholder="Enter your last name"
                 required
               />
@@ -100,8 +69,6 @@ export default function Contact() {
                 type="email"
                 id="email"
                 name="email"
-                value={formData.email}
-                onChange={handleChange}
                 placeholder="Enter your email"
                 required
               />
@@ -112,8 +79,6 @@ export default function Contact() {
                 type="tel"
                 id="phone"
                 name="phone"
-                value={formData.phone}
-                onChange={handleChange}
                 placeholder="Enter your phone number"
               />
             </div>
@@ -126,8 +91,6 @@ export default function Contact() {
                 type="text"
                 id="company"
                 name="company"
-                value={formData.company}
-                onChange={handleChange}
                 placeholder="Enter your company name"
               />
             </div>
@@ -139,8 +102,6 @@ export default function Contact() {
               <textarea
                 id="message"
                 name="message"
-                value={formData.message}
-                onChange={handleChange}
                 rows="5"
                 placeholder="Your message..."
                 required
