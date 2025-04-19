@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import bg from "../../assets/images/home-pic.png"; 
-import './quoteReceived.css';
+import './quotereceived.css';
 
 function QuoteReceived() {
     const location = useLocation();
