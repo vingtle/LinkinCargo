@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import emailjs from 'emailjs-com';
 import './quotes.css';
 import planeImage from '../../assets/images/quotes-pic.png';
 
-function Quotes() {
+export default function Quotes() {
   const navigate = useNavigate();
+
+  // Initialize EmailJS with your public key
+  useEffect(() => {
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+    if (!publicKey) {
+      console.error('Missing VITE_EMAILJS_PUBLIC_KEY');
+      return;
+    }
+    emailjs.init(publicKey);
+    console.log('EmailJS initialized with public key:', publicKey);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = {
+
+    const templateParams = {
       firstName: e.target.firstName.value,
       lastName: e.target.lastName.value,
       email: e.target.email.value,
@@ -23,43 +36,30 @@ function Quotes() {
       hazardous: e.target.hazardous.value,
       additionalComments: e.target.additionalComments.value,
     };
-    console.log('Submitting form data:', formData);
+
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+
+    if (!serviceId || !templateId) {
+      console.error('Missing EmailJS service or template ID');
+      alert('Configuration error: cannot send email.');
+      return;
+    }
 
     try {
-      const response = await fetch('http://localhost:5001/api/quote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      
-      console.log('Response status:', response.status);
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Backend error:', errorData.message || errorData);
-        return;
-      }
-      
-      const data = await response.json();
-      console.log('Submission successful:', data);
-      
-      if (data.reference) {
-        navigate('/quote-received', { state: { reference: data.reference } });
-      } else {
-        console.warn('No reference received.');
-      }
+      const result = await emailjs.send(serviceId, templateId, templateParams);
+      console.log('EmailJS success:', result.text);
+      navigate('/quote-received', { state: { reference: 'sent' } });
     } catch (error) {
-      console.error('Error submitting quote:', error);
+      console.error('EmailJS error:', error);
+      alert("Sorry, we couldn't send your quote request. Please try again later.");
     }
   };
 
   return (
     <div className="quotes-page">
       <section className="quotes-hero">
-        <div
-          className="hero-bg"
-          style={{ backgroundImage: `url(${planeImage})` }}
-        >
+        <div className="hero-bg" style={{ backgroundImage: `url(${planeImage})` }}>
           <div className="hero-overlay">
             <h1>International Air Freight Quotes</h1>
             <p>
@@ -75,23 +75,7 @@ function Quotes() {
       </section>
 
       <section className="quotes-form-section">
-        {/*
-          1) Replace "https://formspree.io/f/yourFormID" with your actual Formspree endpoint.
-          2) method="POST" ensures data is posted to Formspree.
-        */}
-        <form onSubmit={handleSubmit}
-          // className="quotes-form"
-          // action="https://formspree.io/f/mgvazrjl"
-          // method="POST"
-        >
-          {/* Optional: If you want to redirect to a success page on your site, 
-              add a hidden input like this:   */}
-             <input 
-              type="hidden" 
-              name="_next" 
-              value="http://localhost:5174/quote-received"
-            />
-
+        <form onSubmit={handleSubmit}>
           <h2>Contact Info</h2>
           <div className="form-row">
             <div className="form-group">
@@ -103,6 +87,7 @@ function Quotes() {
               <input type="text" name="lastName" placeholder="e.g. Doe" required />
             </div>
           </div>
+
           <div className="form-row">
             <div className="form-group">
               <label>Email</label>
@@ -165,20 +150,11 @@ function Quotes() {
               </select>
             </div>
           </div>
+
           <div className="form-row">
             <div className="form-group">
               <label>Additional Comments</label>
               <textarea name="additionalComments" rows="3" placeholder="Any extra details..." />
-            </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Attach File (optional)</label>
-              {/*
-                Formspree free plan doesn't support file uploads, so this may not be 
-                fully functional unless you're on a paid plan or using a workaround.
-              */}
-              <input type="file" name="attachedFile" />
             </div>
           </div>
 
@@ -190,5 +166,3 @@ function Quotes() {
     </div>
   );
 }
-
-export default Quotes;
