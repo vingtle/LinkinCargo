@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import emailjs from 'emailjs-com';
+import emailjs from "@emailjs/browser";
 import './quotes.css';
 import planeImage from '../../assets/images/quotes-pic.png';
 
