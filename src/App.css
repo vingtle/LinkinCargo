@@ -1,0 +1,8 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Macondo&family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Sriracha&display=swap');
+html, body {
+    margin: 0;
+    padding: 0;
+    /* This can also help hide any accidental overflow */
+    overflow-x: hidden;
+  }

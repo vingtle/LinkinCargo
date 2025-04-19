@@ -1,0 +1,160 @@
+/* support.css */
+
+.support-container {
+    background-color: #1a1c20;  /* Dark background */
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Hero Section */
+  .support-hero {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .support-hero h1 {
+    font-size: 3rem;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  }
+  
+  /* Main Content Row */
+  .support-content-row {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2rem;
+  }
+  
+  /* Left Section - FAQ Heading */
+  .left-section {
+    flex: 1;
+    min-width: 300px;
+    padding: 1rem;
+  }
+  
+  .left-section h2 {
+    font-size: 2.2rem;
+    margin: 0;
+  }
+  
+  /* FAQ Section */
+  .faq-section {
+    flex: 2;
+    min-width: 300px;
+    padding: 1rem;
+  }
+  
+  .faq-section p {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0.5rem 0;
+    color: #ccc;
+  }
+  
+  .faq-section a {
+    color: #80b9e8;
+    text-decoration: none;
+  }
+  
+  .faq-section a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Accordion Styles */
+  .accordion {
+    margin-top: 1rem;
+  }
+  
+  .accordion details {
+    border-bottom: 1px solid #555;
+    padding: 0.75rem 0;
+    cursor: pointer;
+  }
+  
+  .accordion summary {
+    font-size: 1.2rem;
+    font-weight: bold;
+    outline: none;
+  }
+  
+  /* Hide default marker for better cross-browser consistency */
+  .accordion summary::-webkit-details-marker {
+    display: none;
+  }
+  
+  /* Custom arrow icon using a pseudo-element */
+  .accordion summary::after {
+    content: "▼";
+    float: right;
+  }
+  
+  .accordion details[open] summary::after {
+    content: "▲";
+    float: right;
+  }
+  
+  .accordion p {
+    margin: 0.5rem 0 0 1rem;
+    font-size: 1rem;
+    color: #ddd;
+  }
+  
+  /* Responsive Styles */
+  
+  /* For viewports 768px and below */
+  @media (max-width: 768px) {
+    .support-content-row {
+      flex-direction: column;
+      padding: 1.5rem;
+    }
+  
+    .support-hero h1 {
+      font-size: 2.5rem;
+    }
+  
+    .left-section h2 {
+      font-size: 2rem;
+    }
+  
+    .faq-section p,
+    .accordion summary {
+      font-size: 1rem;
+    }
+  }
+  
+  /* For viewports 480px and below */
+  @media (max-width: 480px) {
+    .support-hero {
+      height: 220px;
+    }
+    
+    .support-hero h1 {
+      font-size: 2rem;
+    }
+    
+    .left-section,
+    .faq-section {
+      padding: 1rem;
+    }
+    
+    .left-section h2 {
+      font-size: 1.8rem;
+    }
+    
+    .accordion summary {
+      font-size: 1rem;
+    }
+    
+    .accordion p {
+      font-size: 0.9rem;
+    }
+  }
+  
